@@ -22,8 +22,8 @@ public class AddStudentActivity extends AppCompatActivity {
         EditText phoneEt = findViewById(R.id.addstudent_phone_et);
         EditText addressEt = findViewById(R.id.addstudent_address_et);
         CheckBox checkedCb = findViewById(R.id.addstudent_checked_cb);
-        Button saveBtn = findViewById(R.id.addstudent_cancel_btn);
-        Button cancelBtn = findViewById(R.id.addstudent_save_btn);
+        Button saveBtn = findViewById(R.id.addstudent_save_btn);
+        Button cancelBtn = findViewById(R.id.addstudent_cancel_btn);
 
         saveBtn.setOnClickListener(view -> {
             String name = nameEt.getText().toString();
@@ -32,7 +32,10 @@ public class AddStudentActivity extends AppCompatActivity {
             String address = addressEt.getText().toString();
             Boolean checked = checkedCb.isChecked();
 
-            Model.instance().addStudent(new Student(name, id, phone, address, checked));
+            if (name != "" && id != "" ) {
+                Model.instance().addStudent(new Student(name, id, phone, address, checked));
+            }
+
             finish();
         });
 
