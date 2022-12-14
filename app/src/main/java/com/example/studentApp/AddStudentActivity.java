@@ -3,6 +3,7 @@ package com.example.studentApp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -32,7 +33,7 @@ public class AddStudentActivity extends AppCompatActivity {
             String address = addressEt.getText().toString();
             Boolean checked = checkedCb.isChecked();
 
-            if (name != "" && id != "" ) {
+            if (!name.isEmpty()  && !id.isEmpty()) {
                 Model.instance().addStudent(new Student(name, id, phone, address, checked));
             }
 
