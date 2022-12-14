@@ -1,5 +1,6 @@
 package com.example.studentApp;
 
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -30,13 +31,14 @@ public class StudentList extends AppCompatActivity {
     List<Student> data;
     RecyclerView list;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-            Log.d("TAG", "Returned");
-            list.getAdapter().notifyDataSetChanged();
-            //TODO: this doesn't work
-    }
+    ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    list.getAdapter().notifyDataSetChanged();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +64,14 @@ public class StudentList extends AppCompatActivity {
                 bundle.putString("address", data.get(pos).address);
                 bundle.putString("checked", String.valueOf(data.get(pos).cb));
                 viewIntent.putExtra("selected_student", bundle);
-                startActivity(viewIntent);
+                startActivityForResult.launch(viewIntent);
             }
         });
 
         Button add_button = findViewById(R.id.student_list_add_btn);
         add_button.setOnClickListener(view -> {
             Intent addIntent = new Intent(this, AddStudentActivity.class);
-//            startActivity(addIntent);
-            startActivityForResult(addIntent, 1);
+            startActivityForResult.launch(addIntent);
 
         });
     }
@@ -95,10 +96,11 @@ public class StudentList extends AppCompatActivity {
             });
         }
 
-        public void bind(Student st) {
+        public void bind(Student st, int pos) {
             nameTv.setText(st.name);
             idTv.setText(st.id);
             cb.setChecked(st.cb);
+            cb.setTag(pos);
         }
     }
 
@@ -115,14 +117,24 @@ public class StudentList extends AppCompatActivity {
         @Override
         public StudentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = getLayoutInflater().inflate(R.layout.student_list_row,parent,false);
-            view.findViewById(R.id.studentlistrow_cb).setEnabled(false);
+            CheckBox cb = view.findViewById(R.id.studentlistrow_cb);
+            cb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = (int)cb.getTag();
+                    Student st = data.get(pos);
+                    st.cb = cb.isChecked();
+                    Model.instance().updateStudent(data.get(pos), st);
+                }
+            });
+
             return new StudentViewHolder(view,listener);
         }
 
         @Override
         public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
             Student st = data.get(position);
-            holder.bind(st);
+            holder.bind(st, position);
         }
 
         @Override

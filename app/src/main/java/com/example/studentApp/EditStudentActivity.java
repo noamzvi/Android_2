@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -49,7 +50,8 @@ public class EditStudentActivity extends AppCompatActivity {
         Button delete_button = findViewById(R.id.editstudent_delete_btn);
         delete_button.setOnClickListener(view -> {
             Model.instance().deleteStudent(oldData);
-            //TODO: check that this is working and return to list activity
+            setResult(3, null);
+            finish();
         });
 
         Button save_button = findViewById(R.id.editstudent_save_btn);
@@ -62,7 +64,17 @@ public class EditStudentActivity extends AppCompatActivity {
                     checked_cb.isChecked()
             );
             Model.instance().updateStudent(oldData, newStudentData);
-            //TODO: check that this is working and return to list(or edit?) activity
+
+            Intent resultIntent = new Intent();
+            Bundle bundle=new Bundle();
+            bundle.putString("name", newStudentData.name);
+            bundle.putString("id", newStudentData.id);
+            bundle.putString("phone", newStudentData.phone);
+            bundle.putString("address", newStudentData.address);
+            bundle.putString("checked", String.valueOf(newStudentData.cb));
+            resultIntent.putExtra("updated_student", bundle);
+            setResult(2, resultIntent);
+            finish();
         });
     }
 }

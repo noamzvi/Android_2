@@ -14,4 +14,20 @@ public class Student {
         this.address = address;
         this.cb = checked;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        if(this.id.equals(((Student)obj).id)) {
+            return true;
+        }
+        return false;
+    }
 }
