@@ -63,6 +63,8 @@ public class EditStudentActivity extends AppCompatActivity {
                     address_et.getText().toString(),
                     checked_cb.isChecked()
             );
+            if (!newStudentData.name.isEmpty() && !newStudentData.id.isEmpty()) {
+
             Model.instance().updateStudent(oldData, newStudentData);
 
             Intent resultIntent = new Intent();
@@ -74,6 +76,8 @@ public class EditStudentActivity extends AppCompatActivity {
             bundle.putString("checked", String.valueOf(newStudentData.cb));
             resultIntent.putExtra("updated_student", bundle);
             setResult(2, resultIntent);
+            }
+
             finish();
         });
     }
